@@ -145,6 +145,16 @@ This short-code handles all Weblink widget types based on the provided `type` so
 
 # Developers Section
 
+## Setup
+The project includes a Dockerized setup for WordPress which can be started by running the following command from the project root:
+```bash
+docker-compose up -d
+```
+
+You can then go to http://localhost:8888 to set up your WordPress site.
+
+Once your WordPress site is set up, you will need to install and activate the [Plugin Dependencies](#dependencies). Once these are activated, you can activate this Plugin (*Administrate Weblink2 Shortcodes*).
+
 ## Custom Filters
 
 ### Assets Management
