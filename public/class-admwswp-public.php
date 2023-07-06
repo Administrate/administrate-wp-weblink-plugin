@@ -182,6 +182,7 @@ class Admwswp_Public
                     'id' => '',
                     'show_locale' => false,
                     'configuration' => '',
+                    'product_route' => ''
                 ),
                 $attr
             )
@@ -362,10 +363,20 @@ class Admwswp_Public
         ];
         $weblinkMountArgs = apply_filters('admwswp_weblink_args', $weblinkMountArgs);
         if ($configuration !== '') {
-            $html .= "," . $configuration;
+            $decodedConfiguration = json_decode($configuration, true);
+
+            if ($decodedConfiguration['links'] || !$product_route) {
+                $html .= "," . json_encode($decodedConfiguration);
+            } else {
+                $html .= "," . self::generate_catalogue_links($decodedConfiguration, $product_route);
+            }
+
         } else if ($weblinkMountArgs['args']) {
-            $webLinkArgsJson = json_encode($weblinkMountArgs['args']);
-            $html .= "," . $webLinkArgsJson;
+            if (!$product_route) {
+                $html .= "," . json_encode($weblinkMountArgs['args']);
+            } else {
+                $html .= "," . self::generate_catalogue_links($weblinkMountArgs['args'], $product_route);
+            }
         }
         if ($type == 'PathObjectives' && !$webLinkArgs['showCartButtons'] && $weblinkMountArgs['hooks']['onObjectiveSelection'] != '') {
             $html .= ",{
@@ -393,6 +404,18 @@ class Admwswp_Public
         } else {
             return str_replace('#asyncload', '', $url)."' async='async";
         }
+    }
+
+    public static function generate_catalogue_links($decodedConfiguration, $productRoute) {
+        $baseUrl = "https://".$_SERVER['SERVER_NAME'] . $productRoute . "/";
+        $restOfConfig = rtrim(json_encode($decodedConfiguration), "}");
+        $restOfConfig .= sprintf(', "links": {"catalogueProduct": (catalogueProduct) => {
+            const formattedName = catalogueProduct.name.split(" ").join("-").toLowerCase();
+            const url = "%s" + formattedName;
+            return url;
+        }}}', $baseUrl);
+
+        return $restOfConfig;
     }
 
     /**
