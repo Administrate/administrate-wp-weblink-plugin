@@ -9,6 +9,7 @@ const {
 	CheckboxControl,
 	RadioControl,
 	ToggleControl,
+	TextareaControl,
 	Panel,
 	PanelBody,
 	PanelRow
@@ -29,12 +30,13 @@ registerBlockType(
   			jQuery('.wp-block[data-type="admwswp/weblink"]').on('focus', function(){
   				var type = jQuery('.admwswp-widget-type select').val();
   				updateSections(type);
-  			});
+				});
 
 				function updateSections(value) {
 					  var catalogueType = jQuery('.admwswp-catalogue-type');
 					  var pagerType = jQuery('.admwswp-pager-type');
 						var category = jQuery('.admwswp-catalogue-category');
+						var productRoute = jQuery(".admwswp-product-route");
 						var path = jQuery('.admwswp-path');
 						var course = jQuery('.admwswp-course');
 						var location = jQuery('.admwswp-location');
@@ -59,6 +61,7 @@ registerBlockType(
 						cartOptions.addClass('hidden');
 						eventsListOptions.addClass('hidden');
 						trainingRequest.addClass('hidden');
+						productRoute.addClass('hidden');
 
 						if ('TrainingRequest' === value) {
 							trainingRequest.removeClass('hidden');
@@ -71,6 +74,7 @@ registerBlockType(
 							filters.removeClass('hidden');
 							columns.removeClass('hidden');
 							pagerType.removeClass('hidden');
+							productRoute.removeClass('hidden');
 						}
 
 						if ('CourseDetails' === value) {
@@ -166,6 +170,18 @@ registerBlockType(
 											}
 										),
 										createElement(
+											TextareaControl,
+											{
+												className: 'admwswp-widget-configuration',
+												value: attributes.configuration,
+												label: __('Configuration'),
+												help: __('Build a WebLink Widget on WebLink Builder and paste the configuration in here. This overrides all other configuration options.'),
+												onChange: (value) => {
+													setAttributes({configuration: value});
+												},
+											}
+										),
+										createElement(
 											SelectControl,
 											{
 												className: 'admwswp-catalogue-type',
@@ -196,6 +212,19 @@ registerBlockType(
 													{value: 'loadMore', label: 'Load More'},
 													{value: 'full', label: 'Full Pager'},
 												],
+											}
+										),
+										createElement(
+											TextControl,
+											{
+												className: 'admwswp-product-route',
+												value: attributes.product_route,
+												label: __('Product Route'),
+												help: __('When defined, catalogue cards will automatically link to https://{YOUR_WEBSITE}/{THIS_ROUTE}/product-name-with-dashes instead of using embedded navigation.'),
+												onChange: (value) => {
+													setAttributes({ product_route: value });
+												},
+												type: 'text',
 											}
 										),
 										createElement(

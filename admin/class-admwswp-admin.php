@@ -185,6 +185,10 @@ class Admwswp_Admin
                         'type' => 'string',
                         'default' => 'Catalogue'
                     ),
+                    'configuration' => array(
+                        'type' => 'string',
+                        'default' => ''
+                    ),
                     'catalogue_type' => array(
                         'type' => 'string',
                         'default' => 'All'
@@ -192,6 +196,10 @@ class Admwswp_Admin
                     'pager_type' => array(
                         'type' => 'string',
                         'default' => 'loadMore'
+                    ),
+                    'product_route' => array(
+                        'type' => 'string',
+                        'default' => ''
                     ),
                     'category_id' => array(
                         'type' => 'string',
