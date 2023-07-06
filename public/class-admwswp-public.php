@@ -181,6 +181,7 @@ class Admwswp_Public
                     'show_remaining_places_filter' => false,
                     'id' => '',
                     'show_locale' => false,
+                    'configuration' => '',
                 ),
                 $attr
             )
@@ -258,9 +259,6 @@ class Admwswp_Public
                     $webLinkArgs['fromDate'] = $from_date;
                 }
 
-                if ($to_date) {
-                    $webLinkArgs['toDate'] = $to_date;
-                }
                 if ($to_date) {
                     $webLinkArgs['toDate'] = $to_date;
                 }
@@ -363,7 +361,9 @@ class Admwswp_Public
             'onObjectiveSelection' => '',
         ];
         $weblinkMountArgs = apply_filters('admwswp_weblink_args', $weblinkMountArgs);
-        if ($weblinkMountArgs['args']) {
+        if ($configuration !== '') {
+            $html .= "," . $configuration;
+        } else if ($weblinkMountArgs['args']) {
             $webLinkArgsJson = json_encode($weblinkMountArgs['args']);
             $html .= "," . $webLinkArgsJson;
         }
