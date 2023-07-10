@@ -181,6 +181,8 @@ class Admwswp_Public
                     'show_remaining_places_filter' => false,
                     'id' => '',
                     'show_locale' => false,
+                    'configuration' => '',
+                    'product_route' => ''
                 ),
                 $attr
             )
@@ -258,9 +260,6 @@ class Admwswp_Public
                     $webLinkArgs['fromDate'] = $from_date;
                 }
 
-                if ($to_date) {
-                    $webLinkArgs['toDate'] = $to_date;
-                }
                 if ($to_date) {
                     $webLinkArgs['toDate'] = $to_date;
                 }
@@ -351,6 +350,31 @@ class Admwswp_Public
         $html .= "</div>";
 
         $html .= "<script defer type='text/javascript'>";
+        $html .= sprintf('
+            // This function mimics the behaviour of the WordPress `sanitize_title` function
+            function stringToWordPressSlug(str) {
+                const trimmedString = str.replace(/^\s+|\s+$/g, ""); // trim
+                let lowercaseString = trimmedString.toLowerCase();
+
+                // remove accents, swap ñ for n, etc
+                const from = "àáäâèéëêìíïîòóöôùúüûñçěščřžýúůďťň·/_,:;";
+                const to = "aaaaeeeeiiiioooouuuuncescrzyuudtn------";
+
+                for (let i = 0, l = from.length; i < l; i++) {
+                    lowercaseString = lowercaseString.replace(
+                        new RegExp(from.charAt(i), "g"),
+                        to.charAt(i)
+                    );
+                }
+
+                return lowercaseString
+                    .replace(".", "-") // replace a dot by a dash
+                    .replace(/[^a-z0-9 -]/g, "") // remove invalid chars
+                    .replace(/\s+/g, "-") // collapse whitespace and replace by a dash
+                    .replace(/-+/g, "-") // collapse dashes
+                    .replace(/\//g, ""); // collapse all forward-slashes
+            }
+        ');
         $html .= "var weblinkInterval$widgetId = setInterval(function() { if (typeof weblink !== 'undefined') { ";
         
         $html .= "jQuery(function($) {";
@@ -363,9 +387,21 @@ class Admwswp_Public
             'onObjectiveSelection' => '',
         ];
         $weblinkMountArgs = apply_filters('admwswp_weblink_args', $weblinkMountArgs);
-        if ($weblinkMountArgs['args']) {
-            $webLinkArgsJson = json_encode($weblinkMountArgs['args']);
-            $html .= "," . $webLinkArgsJson;
+        if ($configuration !== '') {
+            $decodedConfiguration = json_decode($configuration, true);
+
+            if ($decodedConfiguration['links'] || !$product_route) {
+                $html .= "," . json_encode($decodedConfiguration);
+            } else {
+                $html .= "," . self::generate_catalogue_links($decodedConfiguration, $product_route);
+            }
+
+        } else if ($weblinkMountArgs['args']) {
+            if (!$product_route) {
+                $html .= "," . json_encode($weblinkMountArgs['args']);
+            } else {
+                $html .= "," . self::generate_catalogue_links($weblinkMountArgs['args'], $product_route);
+            }
         }
         if ($type == 'PathObjectives' && !$webLinkArgs['showCartButtons'] && $weblinkMountArgs['hooks']['onObjectiveSelection'] != '') {
             $html .= ",{
@@ -393,6 +429,17 @@ class Admwswp_Public
         } else {
             return str_replace('#asyncload', '', $url)."' async='async";
         }
+    }
+
+    public static function generate_catalogue_links($decodedConfiguration, $productRoute) {
+        $baseUrl = "https://".$_SERVER['SERVER_NAME'] . "/" . $productRoute . "/";
+        $restOfConfig = substr(json_encode($decodedConfiguration), 0, -1);
+        $restOfConfig .= sprintf(', "links": {"catalogueProduct": (catalogueProduct) => {
+            const url = "%s" + stringToWordPressSlug(catalogueProduct.name);
+            return url;
+        }}}', $baseUrl);
+
+        return $restOfConfig;
     }
 
     /**

@@ -145,6 +145,16 @@ This short-code handles all Weblink widget types based on the provided `type` so
 
 # Developers Section
 
+## Setup
+The project includes a Dockerized setup for WordPress which can be started by running the following command from the project root:
+```bash
+docker-compose up -d
+```
+
+You can then go to http://localhost:8888 to set up your WordPress site.
+
+Once your WordPress site is set up, you will need to install and activate the [Plugin Dependencies](#dependencies). Once these are activated, you can activate this Plugin (*Administrate Weblink2 Shortcodes*).
+
 ## Custom Filters
 
 ### Assets Management
@@ -194,6 +204,10 @@ if (! defined('ADMWSWP_WEBLINK_ENV')) {
 This plugin skeleton and file structure is generated using the [WordPress plugin boilerplate generator](https://wppb.me/).
 
 ## Changelog
+###### 1.6.2
+* Add `product_route` which allows catalogue cards to automatically link to https://{YOUR_WEBSITE}/{THIS_ROUTE}/product-name-with-dashes instead of using embedded navigation
+* Add `configuration` which overrides all other configuration options on the shortcode. This can be used to copy and paste a WebLink Widget configuration from [WebLink Builder](https://weblink-builder.getadministrate.com/) and use it in WordPress
+
 
 ###### 1.6.1
 * Add timeout before triggering add to cart weblink popup.
