@@ -350,6 +350,31 @@ class Admwswp_Public
         $html .= "</div>";
 
         $html .= "<script defer type='text/javascript'>";
+        $html .= sprintf('
+            // This function mimics the behaviour of the WordPress `sanitize_title` function
+            function stringToWordPressSlug(str) {
+                const trimmedString = str.replace(/^\s+|\s+$/g, ""); // trim
+                let lowercaseString = trimmedString.toLowerCase();
+
+                // remove accents, swap ñ for n, etc
+                const from = "àáäâèéëêìíïîòóöôùúüûñçěščřžýúůďťň·/_,:;";
+                const to = "aaaaeeeeiiiioooouuuuncescrzyuudtn------";
+
+                for (let i = 0, l = from.length; i < l; i++) {
+                    lowercaseString = lowercaseString.replace(
+                        new RegExp(from.charAt(i), "g"),
+                        to.charAt(i)
+                    );
+                }
+
+                return lowercaseString
+                    .replace(".", "-") // replace a dot by a dash
+                    .replace(/[^a-z0-9 -]/g, "") // remove invalid chars
+                    .replace(/\s+/g, "-") // collapse whitespace and replace by a dash
+                    .replace(/-+/g, "-") // collapse dashes
+                    .replace(/\//g, ""); // collapse all forward-slashes
+            }
+        ');
         $html .= "var weblinkInterval$widgetId = setInterval(function() { if (typeof weblink !== 'undefined') { ";
         
         $html .= "jQuery(function($) {";
@@ -407,11 +432,10 @@ class Admwswp_Public
     }
 
     public static function generate_catalogue_links($decodedConfiguration, $productRoute) {
-        $baseUrl = "https://".$_SERVER['SERVER_NAME'] . $productRoute . "/";
-        $restOfConfig = rtrim(json_encode($decodedConfiguration), "}");
+        $baseUrl = "https://".$_SERVER['SERVER_NAME'] . "/" . $productRoute . "/";
+        $restOfConfig = substr(json_encode($decodedConfiguration), 0, -1);
         $restOfConfig .= sprintf(', "links": {"catalogueProduct": (catalogueProduct) => {
-            const formattedName = catalogueProduct.name.split(" ").join("-").toLowerCase();
-            const url = "%s" + formattedName;
+            const url = "%s" + stringToWordPressSlug(catalogueProduct.name);
             return url;
         }}}', $baseUrl);
 
