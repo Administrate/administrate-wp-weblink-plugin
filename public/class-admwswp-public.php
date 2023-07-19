@@ -388,6 +388,7 @@ class Admwswp_Public
         ];
         $weblinkMountArgs = apply_filters('admwswp_weblink_args', $weblinkMountArgs);
         if ($configuration !== '') {
+            $configuration = str_replace(["&#091;", "&#093;"], ["[", "]"], $configuration);
             $decodedConfiguration = json_decode($configuration, true);
 
             if ($decodedConfiguration['links'] || !$product_route) {
