@@ -153,6 +153,8 @@ docker-compose up -d
 
 You can then go to http://localhost:8888 to set up your WordPress site.
 
+By default, we are pointing at production for things like Portal Auth, this can be changed in `admwswp.php` where we define `ADMWSWP_WEBLINK_ENV`.
+
 Once your WordPress site is set up, you will need to install and activate the [Plugin Dependencies](#dependencies). Once these are activated, you can activate this Plugin (*Administrate Weblink2 Shortcodes*).
 
 ## Custom Filters
@@ -204,6 +206,9 @@ if (! defined('ADMWSWP_WEBLINK_ENV')) {
 This plugin skeleton and file structure is generated using the [WordPress plugin boilerplate generator](https://wppb.me/).
 
 ## Changelog
+###### 1.6.4
+* Fix parsing widget configurations with single quotes by replacing them with the corresponding ASCII codes to prevent the shortcode being cut-off early by Wordpress. Fix parsing widget configurations with `&` replacing them with `&amp;` to work around a bug in WPTexturize.
+
 ###### 1.6.3
 * Fix parsing widget configurations with arrays by replacing `[]` characters with their corresponding ASCII codes to prevent the shortcode being escaped early by Wordpress.
 

@@ -177,11 +177,16 @@ registerBlockType(
 												label: __('Configuration'),
 												help: __('Build a WebLink Widget on WebLink Builder and paste the configuration in here. This overrides all other configuration options.'),
 												onChange: (value) => {
-													var updatedValue = value.replace(/\[|\]/g, (char) => {
+													var updatedValue = value.replace(/\[|\]|[']/g, (char) => {
 														if (char === '[') {
 															return '&#91;';
 														}
-														return '&#93;';
+														if (char === ']') {
+															return '&#93;';
+														}
+														if (char === "'") {
+															return '&#39;';
+														}
 													});
 													var attributes = {configuration: updatedValue};
 													setAttributes(attributes);
