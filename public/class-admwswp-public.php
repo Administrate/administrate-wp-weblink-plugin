@@ -130,6 +130,8 @@ class Admwswp_Public
             return;
         }
 
+        $globalShowAddToCart = get_field('showAddToCart', 'options');
+
         extract(
             shortcode_atts(
                 array(
@@ -170,7 +172,7 @@ class Admwswp_Public
                     'cart_url' => '',
                     'screen_size' => 'desktop',
                     'pager_type' => 'loadMore',
-                    'show_cart_buttons' => true,
+                    'show_cart_buttons' => !empty($globalShowAddToCart) ? $globalShowAddToCart : false,
                     'hide_edit_button' => false,
                     'show_time_zone' => true,
                     'more_filter' => false,
@@ -194,14 +196,14 @@ class Admwswp_Public
         switch ($type) {
             case 'Cart':
                 $webLinkArgs['hideEditItemButton'] = filter_var($hide_edit_button, FILTER_VALIDATE_BOOLEAN);
-                $showAddToCart = get_field('showAddToCart', 'options');
+                $showAddToCart = $globalShowAddToCart;
                 break;
             case 'Basket':
                 $webLinkArgs['showBasketPopover'] = filter_var($show_basket_popover, FILTER_VALIDATE_BOOLEAN);
                 if ($cart_url) {
                     $webLinkArgs['cartUrl'] = $cart_url;
                 }
-                $showAddToCart = get_field('showAddToCart', 'options');
+                $showAddToCart = $globalShowAddToCart;
                 break;
             case 'PathDetails':
                 if ($path_id) {
@@ -224,8 +226,6 @@ class Admwswp_Public
                     }
                     $webLinkArgs['showLocationFilter'] = filter_var($location_filter, FILTER_VALIDATE_BOOLEAN);
 
-                    // Override showCartButtons based on showAddToCart option
-                    $webLinkArgs['showCartButtons'] = get_field('showAddToCart', 'options');
                 }
                 break;
             case 'CourseDetails':
@@ -323,7 +323,7 @@ class Admwswp_Public
                 $webLinkArgs['showLocale'] = filter_var($show_locale, FILTER_VALIDATE_BOOLEAN);
 
                 // Override showAddToCartColumn based on showAddToCart option
-                $webLinkArgs['showAddToCartColumn'] = get_field('showAddToCart', 'options');
+                $webLinkArgs['showAddToCartColumn'] = $globalShowAddToCart;
 
                 break;
             default:
