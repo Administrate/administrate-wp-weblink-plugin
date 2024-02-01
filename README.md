@@ -1,3 +1,7 @@
+# Deprecated: This WordPress Plugin is No Longer Supported
+
+⚠️ **Important Notice:** This WordPress plugin is no longer actively supported or maintained.
+
 # Administrate Weblink2 Shortcodes Plugin
 
 Requires at least: 5.0.0
