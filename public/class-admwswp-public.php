@@ -425,10 +425,8 @@ class Admwswp_Public
     {
         if (strpos($url, '#asyncload') === false) {
             return $url;
-        } elseif (is_admin()) {
-            return str_replace('#asyncload', '', $url);
         } else {
-            return str_replace('#asyncload', '', $url)."' async='async";
+            return str_replace('#asyncload', '', $url);
         }
     }
 
